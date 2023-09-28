@@ -30,12 +30,11 @@ export const configureServer = (): Express => {
       console.error("Error al iniciar el servidor:", error);
     });
 
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
   app.get("/", (req: Request, res: Response) => {
     res.send("¡El servidor está en funcionamiento!");
   });
 
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   app.use(errorHandlingMiddleware);
 
   return app;

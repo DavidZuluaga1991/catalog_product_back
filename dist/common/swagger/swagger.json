@@ -34,16 +34,16 @@
     },
     "components": {
         "schemas": {
-            "Drone": {
+            "Product": {
                 "type": "object",
                 "properties": {
                     "id": {
                         "type": "string",
-                        "description": "ID del drone"
+                        "description": "ID product"
                     },
                     "name": {
                         "type": "string",
-                        "description": "Nombre del drone"
+                        "description": "Name of product"
                     }
                 }
             }

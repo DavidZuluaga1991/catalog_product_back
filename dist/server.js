@@ -53,10 +53,10 @@ const configureServer = () => {
         .catch((error) => {
         console.error("Error al iniciar el servidor:", error);
     });
-    app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocument));
     app.get("/", (req, res) => {
         res.send("¡El servidor está en funcionamiento!");
     });
+    app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocument));
     app.use(error_handling_middleware_1.errorHandlingMiddleware);
     return app;
 };
