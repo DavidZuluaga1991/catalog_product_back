@@ -1,6 +1,7 @@
 // import express from 'express';
 import bodyParser from "body-parser";
 import express, { Request, Response, Express } from "express";
+import cors from "cors";
 import { MongoDB } from "./infrastructure/database/mongodb";
 import { ProductController } from "./application/product/controllers/product.controller";
 import { ProductService } from "./application/product/services/product.service";
@@ -14,6 +15,13 @@ const app: Express = express();
 export const configureServer = (): Express => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
+
+  const corsOptions = {
+    origin: "http://localhost:4200",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: false,
+  };
+  app.use(cors(corsOptions));
 
   const database = new MongoDB();
 

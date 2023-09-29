@@ -30,6 +30,7 @@ exports.configureServer = void 0;
 // import express from 'express';
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const mongodb_1 = require("./infrastructure/database/mongodb");
 const product_controller_1 = require("./application/product/controllers/product.controller");
 const product_service_1 = require("./application/product/services/product.service");
@@ -42,6 +43,12 @@ const app = (0, express_1.default)();
 const configureServer = () => {
     app.use(body_parser_1.default.json());
     app.use(body_parser_1.default.urlencoded({ extended: true }));
+    const corsOptions = {
+        origin: "http://localhost:4200",
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        credentials: false,
+    };
+    app.use((0, cors_1.default)(corsOptions));
     const database = new mongodb_1.MongoDB();
     database
         .connect()

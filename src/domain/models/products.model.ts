@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import { TypeProduct } from "../enums/type-products.enum";
 
 export interface Product {

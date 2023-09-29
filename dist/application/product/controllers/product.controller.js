@@ -8,8 +8,6 @@ class ProductController {
         this.utils = new utils_middleware_1.Utils();
     }
     getAllProduct(req, res) {
-        const { sku } = req.body;
-        console.log(req.body);
         const filter = {
             $or: [{ hasdeleted: false }, { hasdeleted: undefined }],
         };

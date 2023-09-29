@@ -10,9 +10,6 @@ export class ProductController {
   constructor(private _productPersistence: ProductPersistence) {}
 
   public getAllProduct(req: Request, res: Response) {
-    const { sku } = req.body;
-
-    console.log(req.body);
     const filter = {
       $or: [{ hasdeleted: false }, { hasdeleted: undefined }],
     };
