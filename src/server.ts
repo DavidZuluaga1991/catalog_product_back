@@ -15,22 +15,21 @@ const app: Express = express();
 export const configureServer = (): Express => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-  const allowedOrigins = [
-    "http://localhost:4200",
-    "https://catalog-product-front.vercel.app/",
-  ];
+  const allowedOrigins = ["https://catalog-product-front.vercel.app"];
 
-  const corsOptions = {
-    origin: (origin: any, callback: any) => {
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("No permitido por CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  };
-  app.use(cors(corsOptions));
+  // const corsOptions = {
+  //   origin: (origin: any, callback: any) => {
+  //     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+  //       callback(null, true);
+  //     } else {
+  //       callback(new Error("No permitido por CORS"));
+  //     }
+  //   },
+  //   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  // };
+  // app.use(cors(corsOptions));
+
+  app.use(cors());
 
   const database = new MongoDB();
 
