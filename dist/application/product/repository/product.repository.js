@@ -21,7 +21,6 @@ class ProductRepository {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this._collection
                 .find(filter)
-                .sort({ sku: -1 })
                 .limit(pagination.pageSize)
                 .skip((_a = pagination.skip) !== null && _a !== void 0 ? _a : 1)
                 .toArray();

@@ -16,7 +16,6 @@ export class ProductRepository implements ProductPersistence {
   ): Promise<Product[]> {
     return await this._collection
       .find(filter)
-      .sort({ sku: -1 })
       .limit(pagination.pageSize)
       .skip(pagination.skip ?? 1)
       .toArray();
