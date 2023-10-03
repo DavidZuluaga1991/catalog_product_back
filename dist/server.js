@@ -44,17 +44,6 @@ const configureServer = () => {
     app.use(body_parser_1.default.json());
     app.use(body_parser_1.default.urlencoded({ extended: true }));
     const allowedOrigins = ["https://catalog-product-front.vercel.app"];
-    // const corsOptions = {
-    //   origin: (origin: any, callback: any) => {
-    //     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-    //       callback(null, true);
-    //     } else {
-    //       callback(new Error("No permitido por CORS"));
-    //     }
-    //   },
-    //   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    // };
-    // app.use(cors(corsOptions));
     app.use((0, cors_1.default)());
     const database = new mongodb_1.MongoDB();
     database

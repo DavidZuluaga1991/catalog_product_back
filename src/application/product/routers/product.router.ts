@@ -7,10 +7,6 @@ export function productHttpRoutes(
 ) {
   const router = Router();
 
-  router.get(
-    "/product",
-    productController.getAllProduct2.bind(productController)
-  );
   router.post(
     "/product/filter",
     productController.getAllProduct.bind(productController)

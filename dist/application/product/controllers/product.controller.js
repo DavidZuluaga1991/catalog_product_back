@@ -1,74 +1,30 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductController = void 0;
-const utils_middleware_1 = require("../../../common/middlewares/utils.middleware");
 class ProductController {
-    constructor(_productPersistence) {
-        this._productPersistence = _productPersistence;
-        this.utils = new utils_middleware_1.Utils();
-    }
-    getAllProduct2(req, res) {
-        const filter = {
-            $or: [{ hasdeleted: false }, { hasdeleted: undefined }],
-        };
-        const pagination = this.utils.ValidatePagination(req.query.pageSize + "", req.query.page + "");
-        this._productPersistence
-            .countProducts(filter, pagination)
-            .then((count) => {
-            const totalPages = this.utils.GetTotalPages(count, pagination.pageSize);
-            this._productPersistence
-                .getAllProducts(filter, pagination)
-                .then((products) => {
-                const result = {
-                    data: products,
-                    pagination: Object.assign(Object.assign({}, pagination), { countData: products.length, totalPages }),
-                };
-                res.json(result);
-            });
-        })
-            .catch((err) => {
-            throw new Error("PRODUCT_NOT_FOUND");
-        });
+    constructor(_productService) {
+        this._productService = _productService;
     }
     getAllProduct(req, res) {
-        const { pagination, filter } = req.body;
-        const infoFilters = filter === null || filter === void 0 ? void 0 : filter.map((filter) => {
-            return { [filter.key]: { $regex: filter.value, $options: "i" } };
-        });
-        let tempFilter = {
-            $and: [
-                {
-                    $or: [{ hasdeleted: false }, { hasdeleted: undefined }],
-                },
-            ],
-        };
-        if (infoFilters.length > 0) {
-            tempFilter = {
-                $and: [...tempFilter.$and, ...infoFilters],
-            };
-        }
-        const tempPagination = this.utils.ValidatePagination(pagination.pageSize + "", pagination.page + "");
-        this._productPersistence
-            .countProducts(tempFilter, tempPagination)
-            .then((count) => {
-            const totalPages = this.utils.GetTotalPages(count, tempPagination.pageSize);
-            this._productPersistence
-                .getAllProducts(tempFilter, tempPagination)
-                .then((products) => {
-                const result = {
-                    data: products,
-                    pagination: Object.assign(Object.assign({}, tempPagination), { countData: products.length, totalPages }),
-                };
-                res.json(result);
-            });
-        })
-            .catch((err) => {
-            throw new Error("PRODUCT_NOT_FOUND");
+        return __awaiter(this, void 0, void 0, function* () {
+            const { pagination, filter } = req.body;
+            const products = yield this._productService.getAllProducts(filter, pagination);
+            console.log(products);
+            res.json(products);
         });
     }
     getProductById(req, res) {
         const { id } = req.params;
-        this._productPersistence
+        this._productService
             .getProductById(id)
             .then((product) => {
             res.json(product);
@@ -89,7 +45,7 @@ class ProductController {
             type,
             hasdeleted: false,
         };
-        this._productPersistence
+        this._productService
             .createProduct(newProduct)
             .then((product) => {
             res.status(201).json({ product });
@@ -111,7 +67,7 @@ class ProductController {
             type,
             hasdeleted: false,
         };
-        this._productPersistence
+        this._productService
             .updateProduct(id, product)
             .then((product) => {
             res.status(201).json({ product });
@@ -120,7 +76,7 @@ class ProductController {
     }
     deleteProduct(req, res) {
         const { id } = req.params;
-        this._productPersistence
+        this._productService
             .deleteProduct(id)
             .then((product) => {
             res.status(200).json({ message: "PRODUCT_DISPOSED_CORRECTLY" });

@@ -20,9 +20,9 @@ class ProductRepository {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             return yield this._collection
-                .find(filter)
-                .limit(pagination.pageSize)
+                .find(this.generateFilter(filter))
                 .skip((_a = pagination.skip) !== null && _a !== void 0 ? _a : 1)
+                .limit(pagination.pageSize)
                 .toArray();
         });
     }
@@ -44,7 +44,25 @@ class ProductRepository {
         return this._collection.findOneAndUpdate({ _id: new mongodb_1.ObjectId(id) }, { $set: { hasdeleted: true } }, { returnDocument: "after" });
     }
     countProducts(filter, pagination) {
-        return this._collection.countDocuments(filter);
+        return this._collection.countDocuments(this.generateFilter(filter));
+    }
+    generateFilter(filter) {
+        const infoFilters = filter.map((filter) => {
+            return { [filter.key]: { $regex: filter.value, $options: "i" } };
+        });
+        let tempFilter = {
+            $and: [
+                {
+                    $or: [{ hasdeleted: false }, { hasdeleted: undefined }],
+                },
+            ],
+        };
+        if (infoFilters.length > 0) {
+            tempFilter = {
+                $and: [...tempFilter.$and, ...infoFilters],
+            };
+        }
+        return tempFilter;
     }
 }
 exports.ProductRepository = ProductRepository;

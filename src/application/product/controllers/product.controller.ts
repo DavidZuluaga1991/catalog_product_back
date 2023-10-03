@@ -4,96 +4,24 @@ import { Product } from "../../../domain/models/products.model";
 import { ResultSearch } from "../../../common/models/result-search.model";
 import { Utils } from "../../../common/middlewares/utils.middleware";
 import { Filter } from "../../../common/models/filter.model";
+import { ProductService } from "../services/product.service";
 
 export class ProductController {
-  utils: Utils = new Utils();
-
-  constructor(private _productPersistence: ProductPersistence) {}
-
-  public getAllProduct2(req: Request, res: Response) {
-    const filter = {
-      $or: [{ hasdeleted: false }, { hasdeleted: undefined }],
-    };
-    const pagination = this.utils.ValidatePagination(
-      req.query.pageSize + "",
-      req.query.page + ""
-    );
-    this._productPersistence
-      .countProducts(filter, pagination)
-      .then((count) => {
-        const totalPages = this.utils.GetTotalPages(count, pagination.pageSize);
-        this._productPersistence
-          .getAllProducts(filter, pagination)
-          .then((products) => {
-            const result: ResultSearch<Product[]> = {
-              data: products,
-              pagination: {
-                ...pagination,
-                countData: products.length,
-                totalPages,
-              },
-            };
-            res.json(result);
-          });
-      })
-      .catch((err) => {
-        throw new Error("PRODUCT_NOT_FOUND");
-      });
-  }
-
-  public getAllProduct(req: Request, res: Response) {
+  constructor(private _productService: ProductService) {}
+  public async getAllProduct(req: Request, res: Response) {
     const { pagination, filter } = req.body;
 
-    const infoFilters = filter?.map((filter: Filter) => {
-      return { [filter.key]: { $regex: filter.value, $options: "i" } };
-    });
-
-    let tempFilter: any = {
-      $and: [
-        {
-          $or: [{ hasdeleted: false }, { hasdeleted: undefined }],
-        },
-      ],
-    };
-
-    if (infoFilters.length > 0) {
-      tempFilter = {
-        $and: [...tempFilter.$and, ...infoFilters],
-      };
-    }
-    const tempPagination = this.utils.ValidatePagination(
-      pagination.pageSize + "",
-      pagination.page + ""
+    const products = await this._productService.getAllProducts(
+      filter,
+      pagination
     );
-    this._productPersistence
-      .countProducts(tempFilter, tempPagination)
-      .then((count) => {
-        const totalPages = this.utils.GetTotalPages(
-          count,
-          tempPagination.pageSize
-        );
-        this._productPersistence
-          .getAllProducts(tempFilter, tempPagination)
-          .then((products) => {
-            const result: ResultSearch<Product[]> = {
-              data: products,
-              pagination: {
-                ...tempPagination,
-                countData: products.length,
-                totalPages,
-              },
-            };
-            res.json(result);
-          });
-      })
-      .catch((err) => {
-        throw new Error("PRODUCT_NOT_FOUND");
-      });
+    console.log(products);
+    res.json(products);
   }
 
   public getProductById(req: Request, res: Response) {
     const { id } = req.params;
-    this._productPersistence
+    this._productService
       .getProductById(id)
       .then((product) => {
         res.json(product);
@@ -115,7 +43,7 @@ export class ProductController {
       type,
       hasdeleted: false,
     };
-    this._productPersistence
+    this._productService
       .createProduct(newProduct)
       .then((product) => {
         res.status(201).json({ product });
@@ -138,7 +66,7 @@ export class ProductController {
       type,
       hasdeleted: false,
     };
-    this._productPersistence
+    this._productService
       .updateProduct(id, product)
       .then((product) => {
         res.status(201).json({ product });
@@ -148,7 +76,7 @@ export class ProductController {
 
   public deleteProduct(req: Request, res: Response) {
     const { id } = req.params;
-    this._productPersistence
+    this._productService
       .deleteProduct(id)
       .then((product) => {
         res.status(200).json({ message: "PRODUCT_DISPOSED_CORRECTLY" });

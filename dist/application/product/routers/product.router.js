@@ -4,7 +4,6 @@ exports.productHttpRoutes = void 0;
 const express_1 = require("express");
 function productHttpRoutes(app, productController) {
     const router = (0, express_1.Router)();
-    router.get("/product", productController.getAllProduct2.bind(productController));
     router.post("/product/filter", productController.getAllProduct.bind(productController));
     router.get("/product/:id", productController.getProductById.bind(productController));
     router.post("/product", productController.createProduct.bind(productController));
