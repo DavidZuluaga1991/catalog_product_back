@@ -18,17 +18,20 @@ class ProductService {
     }
     getAllProducts(filter, pagination) {
         return __awaiter(this, void 0, void 0, function* () {
-            const tempPagination = this.utils.ValidatePagination(pagination.pageSize + "", pagination.page + "");
-            const products = yield this._productPersistence.getAllProducts(filter, tempPagination);
-            const count = yield this._productPersistence.countProducts(filter, tempPagination);
-            const totalPages = this.utils.GetTotalPages(count, tempPagination.pageSize);
-            const result = {
-                data: products,
-                pagination: Object.assign(Object.assign({}, tempPagination), { countData: products.length, totalPages }),
-            };
-            return new Promise((resolve, reject) => {
-                resolve(result);
-            });
+            try {
+                const tempPagination = this.utils.ValidatePagination(pagination.pageSize + "", pagination.page + "");
+                const products = yield this._productPersistence.getAllProducts(filter, tempPagination);
+                const count = yield this._productPersistence.countProducts(filter, tempPagination);
+                const totalPages = this.utils.GetTotalPages(count, tempPagination.pageSize);
+                const result = {
+                    data: products,
+                    pagination: Object.assign(Object.assign({}, tempPagination), { countData: products.length, totalPages }),
+                };
+                return result;
+            }
+            catch (error) {
+                throw new Error("INTERNAL_SERVER");
+            }
         });
     }
     getProductById(id) {

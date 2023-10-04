@@ -14,30 +14,35 @@ export class ProductService {
     filter: Filter[],
     pagination: Pagination
   ): Promise<ResultSearch<Product[]>> {
-    const tempPagination = this.utils.ValidatePagination(
-      pagination.pageSize + "",
-      pagination.page + ""
-    );
-    const products = await this._productPersistence.getAllProducts(
-      filter,
-      tempPagination
-    );
-    const count = await this._productPersistence.countProducts(
-      filter,
-      tempPagination
-    );
-    const totalPages = this.utils.GetTotalPages(count, tempPagination.pageSize);
-    const result: ResultSearch<Product[]> = {
-      data: products,
-      pagination: {
-        ...tempPagination,
-        countData: products.length,
-        totalPages,
-      },
-    };
-    return new Promise<ResultSearch<Product[]>>((resolve, reject) => {
-      resolve(result);
-    });
+    try {
+      const tempPagination = this.utils.ValidatePagination(
+        pagination.pageSize + "",
+        pagination.page + ""
+      );
+      const products = await this._productPersistence.getAllProducts(
+        filter,
+        tempPagination
+      );
+      const count = await this._productPersistence.countProducts(
+        filter,
+        tempPagination
+      );
+      const totalPages = this.utils.GetTotalPages(
+        count,
+        tempPagination.pageSize
+      );
+      const result: ResultSearch<Product[]> = {
+        data: products,
+        pagination: {
+          ...tempPagination,
+          countData: products.length,
+          totalPages,
+        },
+      };
+      return result;
+    } catch (error) {
+      throw new Error("INTERNAL_SERVER");
+    }
   }
   getProductById(id: string): Promise<Product | null> {
     return this._productPersistence.getProductById(id);

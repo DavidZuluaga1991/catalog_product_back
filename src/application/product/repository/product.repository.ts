@@ -11,7 +11,7 @@ export class ProductRepository implements ProductPersistence {
     this._collection = this._db.getDb().collection<Product>("product");
   }
 
-  async getAllProducts(
+  public async getAllProducts(
     filter: Filter[],
     pagination: Pagination
   ): Promise<Product[]> {
@@ -26,13 +26,13 @@ export class ProductRepository implements ProductPersistence {
     return this._collection.findOne({ _id: new ObjectId(id) });
   }
 
-  createProduct(product: Product): Promise<Product> {
-    return new Promise<Product>((resolve, reject) => {
-      this._collection
-        .insertOne(product)
-        .then((res) => resolve(product))
-        .catch((err) => reject(err));
-    });
+  public async createProduct(product: Product): Promise<Product> {
+    try {
+      const insert = await this._collection.insertOne(product);
+      return product;
+    } catch (error) {
+      throw new Error("NOT_INSERT_PRODUCT");
+    }
   }
 
   updateProduct(id: string, product: Product): Promise<Product | null> {

@@ -17,73 +17,81 @@ class ProductController {
     getAllProduct(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { pagination, filter } = req.body;
-            const products = yield this._productService.getAllProducts(filter, pagination);
-            console.log(products);
-            res.json(products);
+            try {
+                const products = yield this._productService.getAllProducts(filter, pagination);
+                res.json(products);
+            }
+            catch (error) {
+                throw new Error("PRODUCT_NOT_FOUND");
+            }
         });
     }
     getProductById(req, res) {
-        const { id } = req.params;
-        this._productService
-            .getProductById(id)
-            .then((product) => {
-            res.json(product);
-        })
-            .catch((err) => {
-            throw new Error("PRODUCT_NOT_FOUND");
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            try {
+                const product = yield this._productService.getProductById(id);
+                res.json(product);
+            }
+            catch (err) {
+                throw new Error("PRODUCTS_NOT_FOUND");
+            }
         });
     }
     createProduct(req, res) {
-        const { sku, name, description, image, price, stock, type } = req.body;
-        const newProduct = {
-            sku,
-            name,
-            description,
-            image,
-            price,
-            stock,
-            type,
-            hasdeleted: false,
-        };
-        this._productService
-            .createProduct(newProduct)
-            .then((product) => {
-            res.status(201).json({ product });
-        })
-            .catch((err) => {
-            throw new Error("PRODUCT_NOT_FOUND");
+        return __awaiter(this, void 0, void 0, function* () {
+            const { sku, name, description, image, price, stock, type } = req.body;
+            try {
+                const newProduct = {
+                    sku,
+                    name,
+                    description,
+                    image,
+                    price,
+                    stock,
+                    type,
+                    hasdeleted: false,
+                };
+                const product = yield this._productService.createProduct(newProduct);
+                res.status(201).json({ product });
+            }
+            catch (error) {
+                throw new Error("PRODUCT_NOT_FOUND");
+            }
         });
     }
     updateProduct(req, res) {
-        const { id } = req.params;
-        const { sku, name, description, image, price, stock, type } = req.body;
-        const product = {
-            sku,
-            name,
-            description,
-            image,
-            price,
-            stock,
-            type,
-            hasdeleted: false,
-        };
-        this._productService
-            .updateProduct(id, product)
-            .then((product) => {
-            res.status(201).json({ product });
-        })
-            .catch((err) => new Error("PRODUCT_COULD_NOT_BE_UPDATED"));
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { sku, name, description, image, price, stock, type } = req.body;
+            try {
+                const product = {
+                    sku,
+                    name,
+                    description,
+                    image,
+                    price,
+                    stock,
+                    type,
+                    hasdeleted: false,
+                };
+                yield this._productService.updateProduct(id, product);
+                res.status(201).json({ product });
+            }
+            catch (error) {
+                throw new Error("PRODUCT_COULD_NOT_BE_UPDATED");
+            }
+        });
     }
     deleteProduct(req, res) {
         const { id } = req.params;
-        this._productService
-            .deleteProduct(id)
-            .then((product) => {
+        try {
+            this._productService.deleteProduct(id);
             res.status(200).json({ message: "PRODUCT_DISPOSED_CORRECTLY" });
-        })
-            .catch((err) => {
+        }
+        catch (error) {
             throw new Error("THE_PRODUCT_COULD_NOT_BE_SUCCESSFULLY_REMOVED");
-        });
+        }
     }
 }
 exports.ProductController = ProductController;

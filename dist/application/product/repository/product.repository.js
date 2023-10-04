@@ -30,11 +30,14 @@ class ProductRepository {
         return this._collection.findOne({ _id: new mongodb_1.ObjectId(id) });
     }
     createProduct(product) {
-        return new Promise((resolve, reject) => {
-            this._collection
-                .insertOne(product)
-                .then((res) => resolve(product))
-                .catch((err) => reject(err));
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const insert = yield this._collection.insertOne(product);
+                return product;
+            }
+            catch (error) {
+                throw new Error("NOT_INSERT_PRODUCT");
+            }
         });
     }
     updateProduct(id, product) {
